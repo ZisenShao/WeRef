@@ -1,0 +1,43 @@
+#VRML_SIM R2025a utf8
+# Light designed to match the skyboxes in the TexturedBackground PROTO.
+# template language: javascript
+
+PROTO TexturedBackgroundLight [
+  field SFString texture      "stadium"      # e.g. 'stadium', 'sunset', etc.
+  field SFFloat  luminosity   1.0            # Multiplier for the final intensity.
+  field SFVec3f  direction    0 -1 0         # Direction of the directional light.
+  field SFColor  color        0.95 0.95 1    # Color of the light.
+  field SFBool   castShadows  TRUE           # Defines whether the light should cast shadows.
+]
+{
+  %<
+    let dir = fields.direction.value;  // This is an object {x, y, z}
+    let col = fields.color.value;      // This is an object {r, g, b}
+    let lum = fields.luminosity.value;
+
+    const fallback = {
+      direction: {x: -2.1, y: -0.5, z: 2.1},
+      color:     {r: 0.95, g: 0.95, b: 1.0},
+      baseIntensity: 1
+    };
+
+    // If your world uses ENU coordinates, remap the direction
+    if (context.coordinate_system === 'ENU') {
+      const old = {x: dir.x, y: dir.y, z: dir.z};
+      dir.x = old.z;
+      dir.y = old.x;
+      dir.z = old.y;
+    }
+  >%
+
+  DirectionalLight {
+    ambientIntensity 1
+    # Use .x, .y, .z for the direction
+    direction  %<= dir.x >% %<= dir.y >% %<= dir.z >%
+    # Use .r, .g, .b for the color
+    color      %<= col.r >% %<= col.g >% %<= col.b >%
+    intensity  %<= lum * fallback.baseIntensity >%
+    on         TRUE
+    castShadows IS castShadows
+  }
+}
