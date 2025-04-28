@@ -3,6 +3,5 @@ build/
 controllers/nao_soccer_player/images
 *.wbproj
 *.pyc
+.*
 __pycache__
-*.jpg
-*.png

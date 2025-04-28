@@ -4,6 +4,16 @@
 
 WeRef is an open-source synthetic data generation pipeline for RoboCup Standard Platform League (SPL) referee gestures, built using the Webots simulator.
 
+Below shows sample of how data was collected for dynamic gesture and single pose image:
+
+<table>
+  <tr>
+    <td><img src="demos/sample_dynamic_gesture collection.gif" alt="Static gesture demo" /></td>
+    <td><img src="demos/sample_image_data collection.gif" alt="Dynamic gesture demo" /></td>
+  </tr>
+</table>
+
+
 ## Dependencies
 
 * **Webots Simulator:** This codebase use Webots R2025a.
