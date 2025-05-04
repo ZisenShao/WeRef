@@ -16,7 +16,6 @@ GESTURES=(
   "pushing_free_kick_red.bvh"
 )
 
-# WBT files, excluding any "sandra_*.wbt".
 WBT_FILES=(
   "anthony_dimlight_crowded.wbt"
   "robert_dimlight_crowded.wbt"
@@ -51,22 +50,21 @@ WBT_FILES=(
   "sophia_stronglight_crowded_1.wbt"
 )
 
-# Outer loop: for each gesture .bvh
 for gesture in "${GESTURES[@]}"; do
   echo "=== Using gesture: $gesture ==="
+
+  DURATION=45
   
-  # Inner loop: process each .wbt file
   for wbt in "${WBT_FILES[@]}"; do
     echo "Modifying $wbt => $gesture"
 
-    # In-place edit so that ../../motions/<anything>.bvh => ../../motions/$gesture
     sed -i '' "s|\(\.\./\.\./motions/\)[^\"]*\.bvh|\1$gesture|g" "$WORLDS_DIR/$wbt"
 
-    echo "Running $wbt for 14 seconds..."
+    echo "Running $wbt for $DURATION seconds..."
     "$WEBOTS_PATH" --batch --mode=fast "$WORLDS_DIR/$wbt" &
     WEBOTS_PID=$!
 
-    sleep 12
+    sleep "$DURATION"
 
     kill "$WEBOTS_PID" 2>/dev/null
     wait "$WEBOTS_PID" 2>/dev/null
@@ -77,4 +75,4 @@ for gesture in "${GESTURES[@]}"; do
   echo "Done with gesture: $gesture"
 done
 
-echo "All gestures & worlds done."
+echo "All dynamic gestures & worlds done."

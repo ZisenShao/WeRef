@@ -179,7 +179,7 @@ DEF ANTHONY1 Robot {
     "-d"
     "Anthony"
     "-f"
-    "../../motions/full_time.bvh"
+    "../../motions/corner_kick_blue.bvh"
     "-l"
   ]
   supervisor TRUE

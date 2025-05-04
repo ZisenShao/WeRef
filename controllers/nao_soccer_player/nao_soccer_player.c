@@ -68,7 +68,7 @@ static void store_frame_image(WbDeviceTag camera, int frame_index,
   snprintf(file_path, sizeof(file_path), "%s/frame_%d.jpg", dir_path, frame_index);
 
   printf("Saving image to: %s\n", file_path);
-  // wb_camera_save_image(camera, file_path, 100);
+  wb_camera_save_image(camera, file_path, 100);
 }
 
 // ----------------------------------------------------------
@@ -522,7 +522,13 @@ int main() {
 
   double startTime = wb_robot_get_time();
 
-  if (strcmp(gesture, "full_time") != 0 && strcmp(gesture, "substitution") != 0) {
+  const char *end_suffix = "_end";
+  int gesture_len = strlen(gesture);
+  int suffix_len = strlen(end_suffix);
+  bool is_end_pose = (gesture_len > suffix_len) && (strcmp(gesture + gesture_len - suffix_len, end_suffix) == 0);
+
+  // Check if the bvh file is a end pose static gesture
+  if (is_end_pose) {
     while (wb_robot_get_time() < startTime + 3.0) {
       if (wb_robot_step(time_step) == -1)
         break;
@@ -595,7 +601,7 @@ int main() {
     }
   }
   else if (strcmp(gesture, "full_time") == 0) {
-    double nextRandomTime    = startTime + 1.26;
+    double nextRandomTime = startTime + 1.26;
     const double randomInterval = 0.6;
     bool didInitialRandom = false;
 
@@ -668,9 +674,8 @@ int main() {
         break;
     }
   }
-
   else if (strcmp(gesture, "substitution") == 0) {
-    double nextRandomTime    = startTime + 0.94;
+    double nextRandomTime = startTime + 0.94;
     const double randomInterval = 0.44;
     bool didInitialRandom = false;
 
@@ -729,6 +734,80 @@ int main() {
       }
 
       if ((isRed2 || isRed3 || isBlue4) && currentTime >= (startTime + 0.94) && didInitialRandom) {
+        store_frame_image(CameraTop,
+                          frame_count,
+                          gesture,
+                          refereeModel, clothName,
+                          background,
+                          obstacle_flag,
+                          position);
+        frame_count++;
+      }
+
+      if (wb_robot_step(time_step) == -1)
+        break;
+    }
+  }
+  else {
+    double nextRandomTime = startTime + 0.88;
+    const double randomInterval = 0.82;
+    const double gapInterval = 0.02;
+    bool didInitialRandom = false;
+
+    while (true) {
+      double currentTime = wb_robot_get_time();
+      if (isRed2 || isRed3 || isBlue4) {
+        WbNodeRef obs_node = wb_supervisor_node_get_from_def("OBSTACLE_ROBOT");
+        if (obs_node) {
+          WbFieldRef obs_trans_field = wb_supervisor_node_get_field(obs_node, "translation");
+          if (obs_trans_field) {
+            const double *vals = wb_supervisor_field_get_sf_vec3f(obs_trans_field);
+            if (vals) {
+              double dx = vals[0] + 3.0;
+              double dy = vals[1] + 4.0;
+              double dist = sqrt(dx * dx + dy * dy);
+              if (dist < 0.1)
+                obstacle_flag = 0;
+              else
+                obstacle_flag = 1;
+            }
+          }
+        }
+      }
+
+      if (currentTime >= nextRandomTime) {
+        if (strcmp(name, "NAO RED 2") == 0) {
+          randomize_background_light();
+        }
+        if (strcmp(name, "OBSTACLE ROBOT") == 0) {
+          randomize_obstacle_robot();
+        }
+        if (isRed2 || isRed3 || isBlue4) {
+          WbNodeRef my_node = wb_supervisor_node_get_self();
+          if (my_node) {
+            WbFieldRef translation_field = wb_supervisor_node_get_field(my_node, "translation");
+            WbFieldRef rotation_field    = wb_supervisor_node_get_field(my_node, "rotation");
+            if (translation_field && rotation_field) {
+              double rx, ry;
+              if (isRed3)
+                random_position_red3(&rx, &ry);
+              else if (isRed2)
+                random_position_red2(&rx, &ry);
+              else
+                random_position_blue4(&rx, &ry);
+              double new_translation[3] = {rx, ry, 0.335};
+              wb_supervisor_field_set_sf_vec3f(translation_field, new_translation);
+              set_facing_3_0(rotation_field, rx, ry);
+            }
+          }
+        }
+        randomize_ball_position();
+
+        didInitialRandom = true;
+        nextRandomTime += randomInterval + gapInterval;
+      }
+
+      if ((isRed2 || isRed3 || isBlue4) && currentTime >= (startTime + 0.88) && didInitialRandom) {
         store_frame_image(CameraTop,
                           frame_count,
                           gesture,

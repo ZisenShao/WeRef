@@ -4,8 +4,16 @@ WEBOTS_PATH="/Applications/Webots.app/Contents/MacOS/webots"
 WORLDS_DIR="worlds"
 
 GESTURES=(
-  "full_time.bvh"
-  "substitution.bvh"
+  "corner_kick_blue_end.bvh"
+  "corner_kick_red_end.bvh"
+  "goal_blue_end.bvh"
+  "goal_red_end.bvh"
+  "goal_kick_blue_end.bvh"
+  "goal_kick_red_end.bvh"
+  "kick_in_blue_end.bvh"
+  "kick_in_red_end.bvh"
+  "pushing_free_kick_blue_end.bvh"
+  "pushing_free_kick_red_end.bvh"
 )
 
 WBT_FILES=(
@@ -44,25 +52,17 @@ WBT_FILES=(
 
 for gesture in "${GESTURES[@]}"; do
   echo "=== Using gesture: $gesture ==="
-
-  # Determine run duration
-  DURATION=30
-  if [ "$gesture" == "full_time.bvh" ]; then
-    DURATION=32
-  elif [ "$gesture" == "substitution.bvh" ]; then
-    DURATION=25
-  fi
   
   for wbt in "${WBT_FILES[@]}"; do
     echo "Modifying $wbt => $gesture"
 
     sed -i '' "s|\(\.\./\.\./motions/\)[^\"]*\.bvh|\1$gesture|g" "$WORLDS_DIR/$wbt"
 
-    echo "Running $wbt for $DURATION seconds..."
+    echo "Running $wbt for 14 seconds..."
     "$WEBOTS_PATH" --batch --mode=fast "$WORLDS_DIR/$wbt" &
     WEBOTS_PID=$!
 
-    sleep "$DURATION"
+    sleep 12
 
     kill "$WEBOTS_PID" 2>/dev/null
     wait "$WEBOTS_PID" 2>/dev/null
@@ -73,4 +73,4 @@ for gesture in "${GESTURES[@]}"; do
   echo "Done with gesture: $gesture"
 done
 
-echo "All dynamic gestures & worlds done."
+echo "All gestures & worlds done."
