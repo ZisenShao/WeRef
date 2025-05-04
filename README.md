@@ -1,6 +1,6 @@
 # WeRef
 > ⚠️ **Important**  
-> This is still an ongoing research project. More updates and the dataset will be added over the next few weeks.
+> The dataset will be added over the next few days.
 
 ## Overview
 
@@ -62,14 +62,20 @@ Below shows sample of how data was collected for dynamic gesture and single pose
 
 ### 2. Automated Data Collection
 
-Two scripts are provided for batch data generation:
+Three scripts are provided for batch data generation:
 
-* `static_gesture_collection.sh`: Runs simulations for the 10 static referee gestures across different world files.
+* `static_gestures_collection.sh`: Runs simulations for the 10 static referee gestures across different world files.
+* `static_gestures_end_posture_collection.sh`: Runs simulations for the end posture of the 10 static referee gestures across different world files.
 * `dynamic_gestures_collection.sh`: Runs simulations for the 2 dynamic referee gestures (Full Time, Substitution) across different world files.
 
 **To run:**
 
 ```bash
-./static_gesture_collection.sh
+chmod +x static_gestures_collection.sh
+chmod +x static_gestures_end_posture_collection.sh
+chmod +x dynamic_gestures_collection.sh
+./static_gestures_collection.sh
+# or
+./static_gestures_end_posture_collection.sh
 # or
 ./dynamic_gestures_collection.sh
