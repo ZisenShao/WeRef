@@ -179,7 +179,7 @@ DEF ROBERT1 Robot {
     "-d"
     "Robert"
     "-f"
-    "../../motions/corner_kick_blue.bvh"
+    "../../motions/corner_kick_red.bvh"
     "-l"
   ]
   supervisor TRUE

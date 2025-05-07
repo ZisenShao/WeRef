@@ -20,7 +20,7 @@
 static int time_step = -1;
 static int frame_count = 0;
 static const char *gesture = "";
-static const char *clothName = "Cloth1";
+static const char *clothName = "Cloth2";
 static int obstacle_flag = -1; // -1: unknown, 0: absent, 1: present
 
 // Webots Devices & Motion References

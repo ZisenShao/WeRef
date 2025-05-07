@@ -179,7 +179,7 @@ DEF SOPHIA1 Robot {
     "-d"
     "Sophia"
     "-f"
-    "../../motions/substitution.bvh"
+    "../../motions/corner_kick_red.bvh"
     "-l"
   ]
   supervisor TRUE
